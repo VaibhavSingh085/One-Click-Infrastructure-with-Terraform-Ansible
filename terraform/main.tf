@@ -121,8 +121,8 @@ resource "aws_instance" "web" {
 resource "local_file" "ansible_inventory" {
   filename = "${path.module}/../ansible/inventory.ini"
 
-    content = templatefile("${path.module}/inventory.tpl", {
-    public_ip       = aws_instance.web.public_ip
+  content = templatefile("${path.module}/inventory.tpl", {
+    public_ip        = aws_instance.web.public_ip
     private_key_path = pathexpand(var.ssh_private_key_path)
   })
 }

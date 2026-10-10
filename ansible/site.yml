@@ -1,4 +1,3 @@
-
 ---
 - name: Deploy StayScape
   hosts: web
@@ -92,4 +91,3 @@
       retries: 6
       delay: 5
       until: proxy_health.status == 200
-

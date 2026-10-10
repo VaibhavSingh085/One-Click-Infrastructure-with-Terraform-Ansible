@@ -20,5 +20,5 @@ output "public_ip" {
 
 output "ssh_command" {
   description = "SSH command to connect to the web server"
-  value = "ssh -i ${pathexpand(var.ssh_private_key_path)} ubuntu@${aws_instance.web.public_ip}"
+  value       = "ssh -i ${pathexpand(var.ssh_private_key_path)} ubuntu@${aws_instance.web.public_ip}"
 }
