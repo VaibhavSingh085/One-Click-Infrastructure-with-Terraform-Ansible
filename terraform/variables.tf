@@ -22,18 +22,8 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
-<<<<<<< HEAD
 variable "my_ip" {
   description = "Your public IP in CIDR notation (e.g. 203.0.113.10/32)"
-=======
-variable "ssh_public_key" {
-  description = "SSH public key"
-  type        = string
-}
-
-variable "my_ip" {
-  description = "Your public IP in CIDR notation"
->>>>>>> 07a83cdbbaa8d28274044f78dfa5cdded6994cca
   type        = string
 }
 
