@@ -1,0 +1,15 @@
+---
+- name: Update apt package cache
+  become: true
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install basic packages
+  become: true
+  apt:
+    name:
+      - curl
+      - git
+      - unzip
+    state: present

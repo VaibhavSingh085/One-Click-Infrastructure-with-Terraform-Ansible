@@ -1,0 +1,95 @@
+
+---
+- name: Deploy StayScape
+  hosts: web
+  become: true
+
+  vars:
+    app_dir: /opt/stayscape
+    app_port: 8080
+    app_version: "main"
+
+  roles:
+    - common
+
+  tasks:
+    - name: Install Docker and required packages
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - git
+          - python3-docker
+        state: present
+        update_cache: true
+
+    - name: Ensure Docker is running
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Create application directory
+      ansible.builtin.file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Clone StayScape repository
+      ansible.builtin.git:
+        repo: "https://github.com/VaibhavSingh085/StayScape.git"
+        dest: "{{ app_dir }}"
+        version: "{{ app_version }}"
+        force: true
+
+    - name: Copy environment file from control machine
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/StayScape/.env"
+        dest: "{{ app_dir }}/.env"
+        owner: root
+        group: root
+        mode: "0600"
+      no_log: true
+
+    - name: Build StayScape Docker image
+      community.docker.docker_image:
+        name: stayscape
+        source: build
+        build:
+          path: "{{ app_dir }}"
+
+    - name: Run StayScape container
+      community.docker.docker_container:
+        name: stayscape
+        image: stayscape
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "{{ app_port }}:{{ app_port }}"
+        env_file: "{{ app_dir }}/.env"
+
+    - name: Wait for StayScape to respond
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ app_port }}/listings"
+        method: GET
+        status_code: 200
+      register: app_health
+      retries: 12
+      delay: 5
+      until: app_health.status == 200
+
+    - name: Configure Nginx reverse proxy
+      ansible.builtin.include_role:
+        name: nginx
+
+    - name: Verify StayScape through Nginx
+      ansible.builtin.uri:
+        url: http://127.0.0.1/listings
+        method: GET
+        status_code: 200
+      register: proxy_health
+      retries: 6
+      delay: 5
+      until: proxy_health.status == 200
+

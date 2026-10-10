@@ -1,0 +1,19 @@
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.pem
+crash.log
+.env
+*.tfplan
+crash.*.log
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Private keys
+*.pem
+*.key
+
