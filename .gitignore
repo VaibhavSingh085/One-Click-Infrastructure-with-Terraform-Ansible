@@ -1,10 +1,20 @@
+<<<<<<< HEAD
 # Terraform runtime data
+=======
+>>>>>>> 07a83cdbbaa8d28274044f78dfa5cdded6994cca
 .terraform/
 *.tfstate
 *.tfstate.*
 *.tfvars
+<<<<<<< HEAD
 *.tfplan
 crash.log
+=======
+*.pem
+crash.log
+.env
+*.tfplan
+>>>>>>> 07a83cdbbaa8d28274044f78dfa5cdded6994cca
 crash.*.log
 
 # Secrets and local environment
@@ -16,5 +26,8 @@ crash.*.log
 *.pem
 *.key
 
+<<<<<<< HEAD
 # Ansible generated inventory (produced by terraform apply)
 ansible/inventory.ini
+=======
+>>>>>>> 07a83cdbbaa8d28274044f78dfa5cdded6994cca
