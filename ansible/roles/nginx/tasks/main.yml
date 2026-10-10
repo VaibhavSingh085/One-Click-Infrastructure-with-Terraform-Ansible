@@ -1,0 +1,62 @@
+---
+- name: Install Nginx
+  become: true
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Configure StayScape reverse proxy
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/nginx/sites-available/stayscape
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      server {
+          listen 80 default_server;
+          listen [::]:80 default_server;
+
+          server_name _;
+
+          location / {
+              proxy_pass http://127.0.0.1:8080;
+              proxy_http_version 1.1;
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+          }
+      }
+  notify: Restart Nginx
+
+- name: Enable StayScape site
+  become: true
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/stayscape
+    dest: /etc/nginx/sites-enabled/stayscape
+    state: link
+  notify: Restart Nginx
+
+- name: Disable default Nginx site
+  become: true
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Restart Nginx
+
+- name: Validate Nginx configuration
+  become: true
+  ansible.builtin.command: nginx -t
+  changed_when: false
+
+- name: Ensure Nginx is running
+  become: true
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Apply Nginx configuration changes
+  ansible.builtin.meta: flush_handlers

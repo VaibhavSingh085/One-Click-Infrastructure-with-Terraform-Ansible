@@ -1,0 +1,14 @@
+- name: Update apt package cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install basic packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - curl
+      - git
+      - unzip
+    state: present

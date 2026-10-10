@@ -1,0 +1,20 @@
+# Terraform runtime data
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfplan
+crash.log
+crash.*.log
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Private keys
+*.pem
+*.key
+
+# Ansible generated inventory (produced by terraform apply)
+ansible/inventory.ini
